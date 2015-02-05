@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	  <meta charset="UTF-8">
+    <title>final</title>
+ 
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Tangerine">
+    <link href='http://fonts.googleapis.com/css?family=Roboto&effect=3d' rel='stylesheet' type='text/css'>
+    <!--<link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:700' rel='stylesheet' type='text/css'>!-->
+    <link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:700|Share+Tech+Mono' rel='stylesheet' type='text/css'>
+
+    <font face = 'Share Tech Mono' color="black" size="10" class="font-effect-3d"><center><h1>What's Open Near McGill?</h1></center></font>
+
+	<style>
+	#map-canvas {
+         width: 80%;
+        height: 70%;
+		}
+		
+		html{ height: 100%}
+	
+	body {
+        background-image: url(mcgill.jpg);
+        /* Location of the image */
+        background-position: center center;
+        /* Background image is centered vertically and horizontally at all times */
+        background-repeat: no-repeat;
+        /* Background image doesn't tile */
+        background-attachment: fixed;
+        /* Background image is fixed in the viewport so that it doesn't move when 
+     the content's height is greater than the image's height */
+        background-size: cover;
+        /* This is what makes the background image rescale based
+     on the container's size -- website: http://sixrevisions.com/css/responsive-background-image/*/
+	 
+	 height: 100%; margin: 0 ; padding: 0 
+	 }
+	 
+#centeredmenu {
+   float:left;
+   width:100%;
+   background:white;
+   border-bottom:4px solid #000;
+   overflow:hidden;
+   position:relative;
+}
+#centeredmenu ul {
+   clear:left;
+   float:left;
+   list-style:none;
+   margin:0;
+   padding:0;
+   position:relative;
+   left:50%;
+   text-align:center;
+}
+#centeredmenu ul li {
+   display:block;
+   float:left;
+   list-style:none;
+   margin:;
+   padding:0;
+   position:relative;
+   right:50%;
+}
+#centeredmenu ul li a {
+   display:block;
+   margin:0 0 0 12px;
+   padding:10px 10px;
+   background:white;
+   color:black;
+   text-decoration:none;
+   line-height:1.8em;
+}
+
+</style>
+<script src="https://maps.googleapis.com/maps/api/js"></script>
+<script>
+// This contains meta information about the Markers
+var restoMarkersMeta = [
+    ['Lola Rosa', 45.50731,-73.57583]
+];
+var libMarkersMeta = [
+	['Schulich Library', 45.505064,-73.575358]
+];
+
+// These will contain the actual Marker objects after they are created
+var restoMarkers = [];
+var libMarkers = [];
+
+function initialize() {
+    var mapCanvas = document.getElementById('map-canvas');
+    var myLatlng = new google.maps.LatLng(45.505044, -73.577194);
+    var mapOptions = {
+        center: new google.maps.LatLng(45.504785, -73.577151),
+        zoom: 14,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+    }
+    var map = new google.maps.Map(mapCanvas, mapOptions);
+    var infowindow = new google.maps.InfoWindow();
+    var restoMarker, libMarker;
+    var i;
+    for (i = 0; i < restoMarkersMeta.length; i++) {
+        restoMarker = new google.maps.Marker({
+            position: new google.maps.LatLng(restoMarkersMeta[i][1], restoMarkersMeta[
+                i][2]),
+            map: map
+        });
+		restoMarkers.push(restoMarker);
+        google.maps.event.addListener(restoMarker, 'click', (function(
+            restoMarker, i) {
+            return function() {
+                infowindow.setContent(restoMarkersMeta[i][0]);
+                infowindow.open(map, restoMarker);
+            }
+        })(restoMarker, i));
+        restoMarker.setVisible(true);
+    }
+	
+	// Not good practice to repeat code, but this can be refactored later.
+	    for (i = 0; i < libMarkersMeta.length; i++) {
+        libMarker = new google.maps.Marker({
+            position: new google.maps.LatLng(libMarkersMeta[i][1], libMarkersMeta[
+                i][2]),
+            map: map
+        });
+		libMarkers.push(libMarker);
+        google.maps.event.addListener(libMarker, 'click', (function(
+            libMarker, i) {
+            return function() {
+                infowindow.setContent(libMarkersMeta[i][0]);
+                infowindow.open(map, libMarker);
+            }
+        })(libMarker, i));
+        libMarker.setVisible(true);
+    }
+}
+google.maps.event.addDomListener(window, 'load', initialize);
+	  
+</script>
+</head>
+  <body>
+  	<div id="centeredmenu">
+   <ul>
+      <li><a href="#" id="restoLink">Restaurants</a></li>
+      <li><a href="#">Hospitals</a></li>
+      <li><a href="#" id="libLink">Libraries</a></li>
+      <li><a href="#">Cafes</a></li>
+   </ul>
+</div>
+    <div id="map-canvas"></div>
+  </body>
+ 
+<!-- This script must go after the declaration of the corresponding links --> 
+ <script type="text/javascript">    
+
+ function showRestaurants() {
+	for (var i = 0; i < restoMarkers.length; i++) {
+		restoMarkers[i].setVisible(true);
+	}
+	for (var i = 0; i < libMarkers.length; i++) {
+		libMarkers[i].setVisible(false);
+	}
+	
+	// We return false so the link does not take us to domain/#
+    return false;
+}
+function showLibraries() {
+	for (var i = 0; i < libMarkers.length; i++) {
+		libMarkers[i].setVisible(true);
+	}
+	for (var i = 0; i < restoMarkers.length; i++) {
+		restoMarkers[i].setVisible(false);
+	}
+	
+	// We return false so the link does not take us to domain/#
+    return false;
+}
+
+document.getElementById('restoLink').onclick = showRestaurants;
+document.getElementById('libLink').onclick = showLibraries;
+</script>
+</html>
