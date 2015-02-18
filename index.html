@@ -78,15 +78,36 @@
 <script>
 // This contains meta information about the Markers
 var restoMarkersMeta = [
-    ['Lola Rosa', 45.50731,-73.57583]
+    ['Lola Rosa', 45.50731,-73.57583],
+	['McGill Pizza' , 45.506917, -73.576116]
+	
 ];
 var libMarkersMeta = [
-	['Schulich Library', 45.505064,-73.575358]
+	['Schulich Library', 45.505064,-73.575358],
+	['McLennan Library', 45.503397, -73.575975],
+	['Redpath Library', 45.503502, -73.576608], 
+	['Nahum Gelber Law Library', 45.503825, -73.581008] 
+];
+
+var hosMarkersMeta =[
+	['Royal Victoria Hospital', 45.508789, -73.581947],
+	['Montreal Neurological Hospital and Institute', 45.509481, -73.581518],
+	['Montreal General Hospital', 45.497562, -73.589338],
+	['Medisys Labratory Blood Testing Clinic', 45.506703, -73.572408], 
+	['Clinique Médicale de la Cité', 45.511645, -73.577022]
+
+];
+
+var cafMarkersMeta=[
+	['Tim Hortons' , 45.505048, -73.572978] 
+
 ];
 
 // These will contain the actual Marker objects after they are created
 var restoMarkers = [];
 var libMarkers = [];
+var hosMarkers = [];
+var cafMarkers = [];
 
 function initialize() {
     var mapCanvas = document.getElementById('map-canvas');
@@ -98,7 +119,7 @@ function initialize() {
     }
     var map = new google.maps.Map(mapCanvas, mapOptions);
     var infowindow = new google.maps.InfoWindow();
-    var restoMarker, libMarker;
+    var restoMarker, libMarker, hosMarker, cafMarker;
     var i;
     for (i = 0; i < restoMarkersMeta.length; i++) {
         restoMarker = new google.maps.Marker({
@@ -134,6 +155,40 @@ function initialize() {
         })(libMarker, i));
         libMarker.setVisible(true);
     }
+	
+	for (i = 0; i < hosMarkersMeta.length; i++) {
+        hosMarker = new google.maps.Marker({
+            position: new google.maps.LatLng(hosMarkersMeta[i][1], hosMarkersMeta[
+                i][2]),
+            map: map
+        });
+		hosMarkers.push(hosMarker);
+        google.maps.event.addListener(hosMarker, 'click', (function(
+            hosMarker, i) {
+            return function() {
+                infowindow.setContent(hosMarkersMeta[i][0]);
+                infowindow.open(map, hosMarker);
+            }
+        })(hosMarker, i));
+        hosMarker.setVisible(true);
+    }
+	
+	for (i = 0; i < cafMarkersMeta.length; i++) {
+        cafMarker = new google.maps.Marker({
+            position: new google.maps.LatLng(cafMarkersMeta[i][1], cafMarkersMeta[
+                i][2]),
+            map: map
+        });
+		cafMarkers.push(cafMarker);
+        google.maps.event.addListener(cafMarker, 'click', (function(
+            cafMarker, i) {
+            return function() {
+                infowindow.setContent(cafMarkersMeta[i][0]);
+                infowindow.open(map, cafMarker);
+            }
+        })(cafMarker, i));
+        cafMarker.setVisible(true);
+    }
 }
 google.maps.event.addDomListener(window, 'load', initialize);
 	  
@@ -143,9 +198,9 @@ google.maps.event.addDomListener(window, 'load', initialize);
   	<div id="centeredmenu">
    <ul>
       <li><a href="#" id="restoLink">Restaurants</a></li>
-      <li><a href="#">Hospitals</a></li>
+      <li><a href="#" id= "hosLink">Hospitals</a></li>
       <li><a href="#" id="libLink">Libraries</a></li>
-      <li><a href="#">Cafes</a></li>
+      <li><a href="#" id="cafLink">Cafes</a></li>
    </ul>
 </div>
     <div id="map-canvas"></div>
@@ -161,16 +216,64 @@ google.maps.event.addDomListener(window, 'load', initialize);
 	for (var i = 0; i < libMarkers.length; i++) {
 		libMarkers[i].setVisible(false);
 	}
+	for (var i = 0; i < hosMarkers.length; i++) {
+		hosMarkers[i].setVisible(false);
+	}
+	for (var i = 0; i < cafMarkers.length; i++) {
+		cafMarkers[i].setVisible(false);
+	}
 	
 	// We return false so the link does not take us to domain/#
     return false;
 }
+
 function showLibraries() {
 	for (var i = 0; i < libMarkers.length; i++) {
 		libMarkers[i].setVisible(true);
 	}
 	for (var i = 0; i < restoMarkers.length; i++) {
 		restoMarkers[i].setVisible(false);
+	}
+	for (var i = 0; i < hosMarkers.length; i++) {
+		hosMarkers[i].setVisible(false);
+	}
+	for (var i = 0; i < cafMarkers.length; i++) {
+		cafMarkers[i].setVisible(false);
+	}
+	
+	// We return false so the link does not take us to domain/#
+    return false;
+}
+
+function showHospitals(){
+for (var i = 0; i < hosMarkers.length; i++) {
+		hosMarkers[i].setVisible(true);
+	}
+	for (var i = 0; i < restoMarkers.length; i++) {
+		restoMarkers[i].setVisible(false);
+	}
+	for (var i = 0; i < libMarkers.length; i++) {
+		libMarkers[i].setVisible(false);
+	}
+	for (var i = 0; i < cafMarkers.length; i++) {
+		cafMarkers[i].setVisible(false);
+	}
+	
+	// We return false so the link does not take us to domain/#
+    return false;
+}
+function showCafes(){
+for (var i = 0; i < libMarkers.length; i++) {
+		libMarkers[i].setVisible(false);
+	}
+	for (var i = 0; i < restoMarkers.length; i++) {
+		restoMarkers[i].setVisible(false);
+	}
+	for (var i = 0; i < hosMarkers.length; i++) {
+		hosMarkers[i].setVisible(false);
+	}
+	for (var i = 0; i < cafMarkers.length; i++) {
+		cafMarkers[i].setVisible(true);
 	}
 	
 	// We return false so the link does not take us to domain/#
@@ -179,5 +282,8 @@ function showLibraries() {
 
 document.getElementById('restoLink').onclick = showRestaurants;
 document.getElementById('libLink').onclick = showLibraries;
+document.getElementById('hosLink').onclick = showHospitals;
+document.getElementById('cafLink').onclick = showCafes;
+
 </script>
 </html>
